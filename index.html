@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Duda</title>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--ink:#22252b;--muted:#5d626b;--navy:#0b427a;--star:#2a63a5;--tab:#fbe8a6;--tabtx:#a67c00;--sk:#eef0f4;--line:#e3e6eb;--icon:#f0f5ff;--outer:#d9dde4}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--outer);font-family:"Work Sans",system-ui,sans-serif;color:var(--ink);display:flex;justify-content:center}
+#app{position:relative;width:100%;max-width:430px;height:100dvh;background:var(--bg);overflow:hidden}
+@media(min-width:500px){#app{margin:16px 0;height:min(860px,calc(100dvh - 32px));border-radius:28px;box-shadow:0 10px 40px rgba(0,0,0,.25)}}
+.screen{position:absolute;inset:0;display:none;flex-direction:column}
+.screen.on{display:flex}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--star);outline-offset:2px}
+.btn{background:var(--navy);color:#fff;font-weight:700;font-size:14px;letter-spacing:.3px;height:46px;border-radius:5px;width:100%}
+/* splash */
+#splash{background:#0d417b;align-items:center;justify-content:center}
+#splash svg{width:39.6%;height:auto}
+/* login */
+#login{padding:56px 24px 24px;align-items:stretch}
+#login .logo{align-self:center;width:52px;height:50px}
+#login h1{font-size:30px;font-weight:800;text-align:center;margin:24px 0 6px}
+#login p.sub{text-align:center;color:var(--muted);margin-bottom:28px}
+.field{display:block;margin-bottom:16px}
+.field span{display:block;font-size:14px;color:var(--muted);margin-bottom:6px}
+.field input{width:100%;height:50px;border:1px solid var(--line);border-radius:8px;padding:0 14px;background:var(--surface)}
+#login .err{color:#b3261e;font-size:14px;min-height:20px;margin-bottom:8px}
+.note{margin-top:auto;text-align:center;font-size:12px;color:var(--muted)}
+/* welcome */
+#welcome{padding:22px 15px calc(30px + env(safe-area-inset-bottom));align-items:stretch;letter-spacing:.2px}
+#welcome .logo{width:38px;height:37px;align-self:center}
+#welcome h1{font-size:30px;font-weight:800;color:#333438;text-align:center;margin:41px 0 27px;letter-spacing:0}
+#welcome p.sub{color:#3a3b3d;text-align:center;font-size:13px;line-height:1.12;max-width:290px;align-self:center;margin-bottom:21px}
+.list{margin:0 16px;background:#f6f7f9;border:1px solid #e9eaec;border-radius:17px;padding:0 15px}
+.item{display:flex;align-items:center;gap:16px;width:100%;text-align:left;padding:17px 0;border-bottom:1px solid #eceef1}
+.item:last-child{border-bottom:0}
+.ico{flex:none;width:39px;height:39px;border-radius:10px;background:var(--icon);display:grid;place-items:center}
+.ico svg{width:22px;height:22px;stroke:#2f66b0;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.item span:nth-child(2){flex:1;padding-right:6px}
+.item b{display:block;font-weight:500;font-size:13px;color:#111}
+.item small{display:block;color:#4a4b4d;font-size:11px;line-height:1.3;margin-top:1px}
+.item .chev{flex:none;width:18px;height:18px;stroke:#4d4e50;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+#welcome .btn{margin-top:auto}
+/* header */
+.bar{position:relative;display:flex;align-items:center;justify-content:center;height:64px;background:var(--bg);font-size:11.5px;letter-spacing:.8px;text-transform:uppercase;color:#424144;flex:none}
+.bar .back{position:absolute;left:14px;width:44px;height:44px;display:grid;place-items:center}
+.bar .back svg{width:24px;height:24px;stroke:var(--star);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tabs{display:flex;justify-content:center;gap:6px;padding:6px 0 8px;background:var(--bg);border-bottom:1px solid var(--line);flex:none}
+.tabs button{height:20px;padding:0 16px;border-radius:999px;font-size:12.5px;font-weight:600;letter-spacing:.5px;line-height:20px;color:#1f4c84}
+.tabs button[aria-selected=true]{background:#bdd3ee}
+.pane{flex:1;overflow:auto;background:var(--surface);display:none;flex-direction:column;align-items:center}
+.pane.on{display:flex}
+.qr{padding:24px 20px}
+.ph{position:relative;flex:none;width:calc(100% - 46px);height:384px;margin-top:31px;border-radius:25px;background:var(--sk);display:flex;flex-direction:column;align-items:center;padding:73px 16px 0}
+/* skeleton */
+.sk{background:linear-gradient(90deg,var(--sk) 0%,rgba(255,255,255,.55) 50%,var(--sk) 100%) var(--sk);background-size:300% 100%;animation:sh 1.4s linear infinite;border-radius:14px}
+@keyframes sh{from{background-position:100% 0}to{background-position:-100% 0}}
+@media(prefers-reduced-motion:reduce){.sk{animation:none}}
+.ph .sq{width:77px;height:77px;border-radius:19px;margin-bottom:22px}
+.ph .ln{width:100%;height:18px;border-radius:9px}
+/* card */
+.idcard{position:relative;flex:none;width:calc(100% - 35px);height:406px;margin-top:76px;border-radius:25px;overflow:hidden;background:#dbeafd;display:flex;flex-direction:column;align-items:center;padding-top:94px}
+.idcard>*{position:relative;z-index:1}
+.idcard>.bg{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.handle{position:absolute;top:8px;left:50%;margin-left:-23px;width:46px;height:4px;border-radius:2px;background:rgba(255,255,255,.92)}
+.idcard>.uni{position:absolute;left:16px;top:19px;display:flex;align-items:center;gap:5px}
+.uni svg{width:34px;height:33px}
+.uni small{display:block;font-size:7.5px;color:#4b6f8f;line-height:1}
+.uni b{display:block;font-size:13.5px;font-weight:700;color:#1d4e78;letter-spacing:-.1px;line-height:1.15;white-space:nowrap}
+.avatar{width:81px;height:81px;border-radius:19px;background:#daebff;display:grid;place-items:center;font-size:18px;font-weight:500;color:#246070;margin-bottom:12px}
+.idcard h2{font-size:15px;font-weight:600;letter-spacing:.4px;line-height:18px;color:#15181f}
+.curso{margin-top:5px;font-size:14px;line-height:18px;color:#272729}
+.cpf{margin-top:3px;font-size:14px;line-height:18px;color:#667f97;letter-spacing:.4px}
+.rgm{margin-top:18px;width:100%;padding:0 47px;display:flex;justify-content:space-between;font-size:13px;line-height:16px;letter-spacing:.5px;color:#1c1f24}
+.idcard hr{margin:18px 0 0;width:256px;border:0;height:1px;background:rgba(255,255,255,.95)}
+.foot{margin-top:15px;font-size:10.4px;line-height:12px;letter-spacing:.3px;color:#282c2d;white-space:nowrap}
+.phys{flex:none;width:278px;max-width:calc(100% - 40px);margin:16px 0 24px;height:46px;border-radius:4px;font-size:13px;font-weight:600;letter-spacing:.4px}
+.toast{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);background:#22252b;color:#fff;font-size:13px;padding:10px 16px;border-radius:8px;z-index:9;white-space:nowrap}
+/* empty/error */
+.ph.empty{padding-top:107px;text-align:center}
+.ph .handle{background:#fff;top:9px}
+.empty .box{width:79px;height:79px;border-radius:19px;border:3px solid #e2e4e9;margin:0 auto 30px}
+.empty b{display:block;font-size:14px;font-weight:600;margin-bottom:9px}
+.empty p{font-size:11.5px;line-height:1.3;color:var(--ink)}
+.reload{flex:none;margin-top:31px;width:237px;height:30px;font-size:14px;border-radius:3px}
+/* qr */
+.qr h3{font-size:22px;font-weight:600;text-align:center;margin:36px 0 10px}
+.qr p{text-align:center;color:var(--muted);font-size:18px;line-height:1.3;max-width:260px}
+#qrbox{margin:auto;width:240px;height:240px;display:grid;place-items:center}
+#qrbox img,#qrbox canvas{width:240px!important;height:240px!important;background:#fff;padding:0;image-rendering:pixelated}
+#qrsk{width:240px;height:240px;border-radius:20px}
+.exp{margin-bottom:24px;color:var(--muted);font-size:18px}
+.exp b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+/* generic */
+.gen{flex:1;overflow:auto;padding:20px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
+.row small{display:block;color:var(--muted);margin-top:2px}
+.pill{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--icon);color:var(--star);font-weight:600}
+</style>
+</head>
+<body>
+<div id="app">
+ 
+<section class="screen on" id="splash" aria-label="Duda">
+  <svg viewBox="0 0 228.8 222.2" fill="#fff" aria-hidden="true"><use href="#star"/></svg>
+</section>
+ 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="star" viewBox="0 0 228.8 222.2"><path fill-rule="evenodd" d="M227.8 56.3Q227.0 54.1 225.6 52.6Q224.1 51.1 221.8 50.0Q219.5 48.9 217.1 48.4Q214.8 47.9 208.8 47.6Q202.8 47.2 182.2 47.6Q161.6 47.9 148.0 49.4Q134.4 51.0 133.9 50.6Q133.4 50.1 129.5 28.0Q125.6 5.9 124.4 4.1Q123.1 2.2 121.6 1.4Q120.1 0.5 116.9 0.3Q113.6 0.1 111.9 0.8Q110.1 1.5 108.2 3.6Q106.2 5.6 99.8 14.8Q93.2 23.9 79.4 44.7Q65.5 65.5 41.6 73.6Q17.6 81.8 13.6 83.5Q9.5 85.2 7.9 86.7Q6.4 88.1 5.9 90.2Q5.4 92.4 6.6 94.7Q7.9 97.0 20.2 107.1Q32.6 117.2 33.2 118.4Q33.8 119.6 26.4 133.4Q19.1 147.1 11.0 165.4Q2.9 183.8 1.6 187.9Q0.4 192.1 0.2 194.1Q0.0 196.0 0.2 198.2Q0.5 200.4 1.4 202.3Q2.4 204.2 3.9 205.6Q5.5 207.0 7.8 207.8Q10.0 208.6 12.2 208.5Q14.5 208.4 16.8 207.3Q19.1 206.2 50.4 183.5Q81.8 160.8 82.8 160.5Q83.8 160.2 116.5 189.2Q149.2 218.2 151.8 219.8Q154.4 221.2 156.3 221.8Q158.2 222.2 161.2 222.1Q164.2 221.9 166.6 220.8Q168.9 219.8 170.7 217.9Q172.5 216.0 173.9 212.8Q175.2 209.5 175.1 206.5Q175.0 203.5 173.9 199.4Q172.8 195.2 166.4 177.9Q160.0 160.6 153.8 138.5Q147.6 116.4 150.6 114.1Q153.5 111.8 167.6 102.8Q181.6 93.8 202.0 81.6Q222.4 69.4 224.7 67.1Q227.0 64.8 227.8 62.8Q228.6 60.9 228.6 59.7Q228.6 58.5 227.8 56.3ZM110.3 141.0Q125.5 130.6 126.1 130.9Q126.8 131.1 132.1 149.6Q137.5 168.1 141.2 179.3Q144.9 190.5 144.9 192.0Q145.0 193.5 144.3 194.2Q143.6 194.9 142.5 194.6Q141.4 194.2 117.6 173.8Q93.8 153.2 94.4 152.3Q95.1 151.4 110.3 141.0ZM41.4 125.7Q42.2 125.2 53.5 134.5Q64.8 143.8 65.5 144.9Q66.2 146.0 48.2 158.8Q30.2 171.5 26.8 173.6Q23.2 175.8 22.1 175.9Q21.0 176.0 20.2 175.5Q19.5 175.0 19.2 174.1Q18.9 173.1 19.5 170.8Q20.1 168.4 30.3 147.2Q40.5 126.1 41.4 125.7ZM56.9 76.9Q57.9 77.1 57.5 78.3Q57.1 79.5 48.3 94.1Q39.5 108.6 38.6 108.4Q37.8 108.2 31.7 103.6Q25.6 99.0 21.1 95.1Q16.6 91.1 17.1 89.9Q17.6 88.6 20.7 87.4Q23.8 86.1 39.9 81.4Q56.0 76.8 56.9 76.9ZM111.2 67.1Q112.2 67.4 116.8 87.6Q121.2 107.9 120.8 109.1Q120.4 110.2 98.6 124.4Q76.9 138.5 75.6 138.1Q74.4 137.6 60.8 126.6Q47.2 115.5 47.1 114.9Q46.9 114.2 55.2 99.3Q63.5 84.4 66.9 79.1Q70.2 73.9 86.7 70.8Q103.1 67.6 106.7 67.2Q110.2 66.8 111.2 67.1ZM186.6 62.9Q187.8 63.5 187.6 64.8Q187.5 66.1 186.2 67.4Q185.0 68.6 164.6 81.9Q144.2 95.1 143.2 95.0Q142.1 94.9 139.0 80.4Q135.9 65.9 136.2 65.1Q136.5 64.2 144.8 63.4Q153.1 62.6 169.3 62.4Q185.5 62.2 186.6 62.9ZM104.0 26.4Q104.6 26.5 105.1 27.1Q105.6 27.6 107.8 40.1Q109.9 52.6 109.8 53.7Q109.6 54.8 93.9 58.4Q78.1 62.1 78.2 61.1Q78.4 60.1 87.4 47.0Q96.4 33.9 99.1 30.5Q101.9 27.1 102.6 26.7Q103.4 26.2 104.0 26.4Z"/></symbol>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6c545"/><stop offset="1" stop-color="#d9902a"/></linearGradient>
+  <symbol id="chev" viewBox="0 0 20 20"><path d="M7 3l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+ 
+<section class="screen" id="login" aria-label="Entrar">
+  <svg class="logo" viewBox="0 0 228.8 222.2" fill="#2a63a5" aria-hidden="true"><use href="#star"/></svg>
+  <h1>Duda</h1>
+  <p class="sub">Entre com seu RA e senha</p>
+  <label class="field"><span>RA</span><input id="ra" inputmode="numeric" autocomplete="username" value="20260001"></label>
+  <label class="field"><span>Senha</span><input id="pw" type="password" autocomplete="current-password" value="123456"></label>
+  <div class="err" id="err" role="alert"></div>
+  <button class="btn" id="enter">Entrar</button>
+</section>
+ 
+<section class="screen" id="welcome" aria-label="Boas-vindas">
+  <svg class="logo" viewBox="0 0 228.8 222.2" fill="#2a63a5" aria-hidden="true"><use href="#star"/></svg>
+  <h1>Bem-vindo!</h1>
+  <p class="sub">Antes de continuar, confira as principais informações</p>
+  <div class="list">
+    <button class="item" data-go="wallet"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18"/></svg></span><span><b>Minha carteirinha</b><small>Use para consultar e acessar o campus</small></span><svg class="chev"><use href="#chev"/></svg></button>
+    <button class="item" data-go="ava"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span><span><b>Ambiente Virtual</b><small>Acesse o ambiente virtual de aprendizagem</small></span><svg class="chev"><use href="#chev"/></svg></button>
+    <button class="item" data-go="pay"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M8 3v4M16 3v4M8 14h3"/></svg></span><span><b>Pagar Mensalidade</b><small>Confira as formas de pagamento disponíveis</small></span><svg class="chev"><use href="#chev"/></svg></button>
+    <button class="item" data-go="docs"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M9 12h6M9 16h6"/></svg></span><span><b>Emissão de Documentos</b><small>Declarações, histórico e outros</small></span><svg class="chev"><use href="#chev"/></svg></button>
+  </div>
+  <button class="btn" id="home">Ir para a home</button>
+</section>
+ 
+<section class="screen" id="wallet" aria-label="Carteirinha virtual">
+  <div class="bar"><button class="back" data-go="welcome" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 5l-7 7 7 7"/></svg></button>Carteirinha virtual</div>
+  <div class="tabs" role="tablist"><button role="tab" id="t1" aria-selected="true">Carteirinha</button><button role="tab" id="t2" aria-selected="false">Código QR</button></div>
+  <div class="pane on" id="p1"></div>
+  <div class="pane qr" id="p2"></div>
+</section>
+ 
+<section class="screen" id="ava" aria-label="Ambiente Virtual"><div class="bar"><button class="back" data-go="welcome" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 5l-7 7 7 7"/></svg></button>Ambiente virtual</div>
+  <div class="gen"><div class="row"><div>Toxicologia<small>Prof. Fabiano · Aula 08</small></div><span class="pill">Novo</span></div><div class="row"><div>Embriologia<small>Prof. Aurélio · Aula 05</small></div></div><div class="row"><div>Parasitologia<small>Prof. Marcia · Aula 03</small></div></div></div></section>
+<section class="screen" id="pay"><div class="bar"><button class="back" data-go="welcome" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 5l-7 7 7 7"/></svg></button>Mensalidade</div>
+  <div class="gen"><div class="row"><div>Outubro/2026<small>Vence em 10/10 · R$ 487,56</small></div><span class="pill">Em aberto</span></div><div class="row"><div>Setembro/2026<small>Pago em 08/09</small></div><span class="pill">Pago</span></div><div class="row"><div>Agosto/2026<small>Pago em 08/08</small></div><span class="pill">Pago</span></div></div></section>
+<section class="screen" id="docs"><div class="bar"><button class="back" data-go="welcome" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 5l-7 7 7 7"/></svg></button>Documentos</div>
+  <div class="gen"><div class="row"><div>Declaração de matrícula</div><span class="pill">Emitir</span></div><div class="row"><div>Histórico escolar</div><span class="pill">Emitir</span></div><div class="row"><div>Comprovante de vínculo</div><span class="pill">Emitir</span></div></div></section>
+</div>
+ 
+<script>
+// ===== DADOS DO ALUNO FICTÍCIO — edite aqui =====
+const ALUNO = {nome:"Thamires de Paula Lima",curso:"Biomedicina",cpf:"541.029.148-46",rgm:"723146079-8",val:"12/2027",nivel:"CRUZEIRO DO SUL - GRADUAÇÃO SEMI PRESENCIAL"};
+const FORCE_ERROR = location.hash === "#erro"; // abre a carteirinha no estado de erro
+// =================================================
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let timer=null, tries=0;
+function go(id){$$(".screen").forEach(s=>s.classList.toggle("on",s.id===id));if(id==="wallet")openWallet();else clearInterval(timer)}
+$$("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+$("#home").onclick=()=>go("welcome");
+ 
+// splash -> login (ou direto pro welcome se já logado)
+let logged=false;try{logged=localStorage.getItem("duda-login")==="1"}catch(e){}
+setTimeout(()=>go(logged?"welcome":"login"),1600);
+$("#enter").onclick=()=>{
+  if(!/^\d{6,}$/.test($("#ra").value.trim())||$("#pw").value.length<4){$("#err").textContent="RA ou senha inválidos. Confira os dados e tente de novo.";return}
+  $("#err").textContent="";try{localStorage.setItem("duda-login","1")}catch(e){}go("welcome")};
+ 
+// carteirinha
+const skeleton='<div class="ph"><div class="sk sq"></div><div class="sk ln"></div></div>';
+function openWallet(){tab(1);loadCard()}
+function tab(n){
+  $("#t1").setAttribute("aria-selected",n===1);$("#t2").setAttribute("aria-selected",n===2);
+  $("#p1").classList.toggle("on",n===1);$("#p2").classList.toggle("on",n===2);
+  if(n===2)genQR();else clearInterval(timer)}
+$("#t1").onclick=()=>tab(1);$("#t2").onclick=()=>tab(2);
+function toast(t){const e=document.createElement("div");e.className="toast";e.textContent=t;$("#wallet").appendChild(e);setTimeout(()=>e.remove(),2200)}
+function loadCard(){
+  $("#p1").innerHTML=skeleton;
+  setTimeout(()=>{
+    if(FORCE_ERROR&&tries++===0){
+      $("#p1").innerHTML='<div class="ph empty"><i class="handle"></i><div class="box"></div><b>Não encontramos sua carteirinha</b><p>Algo de inesperado aconteceu do nosso lado, tente novamente mais tarde</p></div><button class="btn reload" id="rl">Recarregar</button>';
+      $("#rl").onclick=loadCard;return}
+    $("#p1").innerHTML=`<div class="idcard"><svg class="bg" viewBox="0 0 518 650" preserveAspectRatio="none" aria-hidden="true"><path transform="translate(-8 -10)" fill="#eef5ff" d="M232 0C185 55 110 100 96 190C84 265 105 330 70 395C45 435 12 440 8 452L8 670L380 670L380 650C470 620 520 520 525 415C528 340 470 270 490 190C500 130 470 60 400 0Z"/></svg><i class="handle"></i>
+    <div class="uni"><svg viewBox="0 0 228.8 222.2" fill="url(#gold)" aria-hidden="true"><use href="#star"/></svg><div><small>Universidade</small><b>Cruzeiro do Sul</b></div></div>
+    <div class="avatar" aria-hidden="true">${ALUNO.nome[0]}</div><h2>${ALUNO.nome}</h2><div class="curso">${ALUNO.curso}</div><div class="cpf">${ALUNO.cpf}</div>
+    <div class="rgm"><span>RGM ${ALUNO.rgm}</span><span>VAL: ${ALUNO.val}</span></div><hr><div class="foot">${ALUNO.nivel}</div></div>
+    <button class="btn phys" id="phys">Solicitar carteirinha física</button>`;
+    $("#phys").onclick=()=>toast("Solicitação enviada (demonstração)");
+  },1300)}
+ 
+// QR com expiração de 1:00
+function genQR(){
+  clearInterval(timer);
+  $("#p2").innerHTML='<div id="qrsk" class="sk" style="margin:auto"></div>';
+  setTimeout(()=>{
+    $("#p2").innerHTML='<h3>Código QR gerado com sucesso</h3><p>Aproxime do leitor em uma distância de 10 a 15 cm</p><div id="qrbox"></div><div class="exp">Expira em:<b id="cd">01:00</b></div>';
+    const token=`DUDA|${ALUNO.ra}|${Date.now()}|${Math.random().toString(36).slice(2,10)}`;
+    try{new QRCode($("#qrbox"),{text:token,width:240,height:240,correctLevel:QRCode.CorrectLevel.M})}catch(e){$("#qrbox").textContent="QR indisponível"}
+    let s=60;timer=setInterval(()=>{s--;$("#cd").textContent="00:"+String(s).padStart(2,"0");if(s<=0){clearInterval(timer);genQR()}},1000);
+  },900)}
+</script>
+</body>
+</html>
